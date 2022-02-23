@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb 23 12:21:01 2022
+
+@author: i_atkin
+"""
+
+#pendulum + friction damping and a driving force
+
+#damped, driven system is reduced to drive frequency over time. All starting energy is taken
+
+#import modules 
+from pylab import *
+import scipy.constants as pc
+import numpy as np 
+
+
+L=5
+N = 2000
+g = 9.8 #m/s^2
+beta = 0.5
+gamma = 1.47
+
+w_0 = (g/L)**(1/2)
+w_drive = (2/3) * w_0 #constant times natural frequency
+
+
+#if we want N points in our length of time
+Theta = np.zeros(N)
+
+#starting position
+Theta[0] = 1
+
+w = np.zeros(N)
+
+#starting velocity
+w[0] = 1
+
+
+#creating time array
+t = np.linspace(0,300,N)
+dt = t[1] - t[0]
+
+
+for n in range(1,N):
+
+    a = - ((w_0**(2)) * np.sin(Theta[n-1])) - (2*beta*w[n-1]) + (gamma*(w_0**(2))* np.cos(w_drive * t[n-1]))
+
+    w[n] = w[n-1] + a * dt
+
+    Theta[n] = Theta[n-1] + w[n]*dt
+
+
+print("Beta is: " + str(beta))
+print("Gamma is: " + str(gamma))
+
+figure(1)
+clf()
+plt.plot(Theta,w)
+xlabel("Angular Displacement (radians)")
+ylabel("Angular Velocity (radians/s)")
